@@ -44,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ModelMapper modelMapper;
 
-    @Value("${project.image}")
+    @Value("${bazariobackend.image}")
     private String path;
 
     public ProductServiceImpl(CartRepository cartRepository, CartService cartService, ProductRepository productRepository, CategoryRepository categoryRepository, FileService fileService, ModelMapper modelMapper) {
