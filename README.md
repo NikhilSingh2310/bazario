@@ -122,7 +122,7 @@ mvn spring-boot:run
 
 ## 📬 API Testing
 
-* Import the Postman collection from `postman/ecom_api_collection.json`
+* Import the Postman collection from `postman/BazarioBackend APIs.postman_collection.json`
 * Pre-configured with sample auth and data payloads
 
 ---
