@@ -5,6 +5,7 @@ import com.bazario.bazariobackend.payload.CartDTO;
 import com.bazario.bazariobackend.repository.CartRepository;
 import com.bazario.bazariobackend.service.CartService;
 import com.bazario.bazariobackend.util.AuthUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +16,14 @@ import java.util.List;
 @RequestMapping("/api")
 public class CartController {
 
-    private final CartRepository cartRepository;
-    private final AuthUtil authUtil;
-    private final CartService cartService;
+    @Autowired
+    private CartRepository cartRepository;
 
-    public CartController(CartRepository cartRepository, AuthUtil authUtil, CartService cartService) {
-        this.cartRepository = cartRepository;
-        this.authUtil = authUtil;
-        this.cartService = cartService;
-    }
+    @Autowired
+    private AuthUtil authUtil;
 
+    @Autowired
+    private CartService cartService;
 
     @PostMapping("/carts/products/{productId}/quantity/{quantity}")
     public ResponseEntity<CartDTO> addProductToCart(@PathVariable Long productId,
