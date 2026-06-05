@@ -1,5 +1,8 @@
 package com.bazario.bazariobackend.service.impl;
 
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import com.bazario.bazariobackend.entity.Cart;
 import com.bazario.bazariobackend.entity.Category;
 import com.bazario.bazariobackend.entity.Product;
@@ -56,6 +59,7 @@ public class ProductServiceImpl implements ProductService {
         this.modelMapper = modelMapper;    }
 
     @Override
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() ->
@@ -85,7 +89,9 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    
     @Override
+    @Cacheable(value = "products", key = "#pageNumber + '-' + #pageSize + '-' + #sortBy + '-' + #sortOrder")
     public ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
@@ -172,6 +178,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
         // Get the existing product from DB
         Product productFromDb = productRepository.findById(productId)
@@ -208,6 +215,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = "products", allEntries = true)
     public ProductDTO deleteProduct(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
