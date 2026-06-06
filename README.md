@@ -1,125 +1,156 @@
-# 🛒 Bazario - Developer-Centric E-Commerce Backend
+# 🛒 Bazario — Production-Grade E-Commerce Backend
+Bazario is a robust, scalable, and cloud-deployed e-commerce backend built using **Spring Boot**. Features JWT authentication, Redis caching, rate limiting, Docker containerization, and live deployment on Railway.
 
-Bazario is a robust, modular, and scalable e-commerce backend built using **Spring Boot**. It includes essential features for managing users, products, orders, addresses, and payments — with JWT-based authentication and RESTful APIs. Ideal for developers looking to extend, integrate, or deploy a full-fledged e-commerce solution.
+## 🚀 Live Demo
+**Base URL:** https://bazario-production-cca5.up.railway.app
+
+- Health: https://bazario-production-cca5.up.railway.app/actuator/health
+- Products: https://bazario-production-cca5.up.railway.app/api/public/products
 
 ---
 
 ## 🚧 Project Scope
-
 * **Backend-only API** — Ready to integrate with any frontend (React, Angular, mobile apps).
 * Focused on **clean architecture**, **separation of concerns**, and **security best practices**.
 * Includes ready-to-test Postman collection.
+* **Production deployed** — Live on Railway with cloud MySQL and Redis.
 
 ---
 
 ## 🧩 Features
 
-### 🔐 Authentication & User Management
-
+### 🔐 Authentication & Security
 * JWT-based secure login & registration
-* Role-based access control (user, admin)
+* Role-based access control (Admin, Seller, User)
+* Rate limiting — 100 requests/minute per IP (Bucket4j)
 * Profile & address CRUD operations
 
 ### 🛍️ Product Lifecycle
-
 * Admin APIs for add/update/delete
 * Public product search (name, category, etc.)
-* Product metadata: description, image URL, price
+* Pagination & sorting on all listing APIs
+* Redis caching on product endpoints — TTL 10 minutes
 
-### 📦 Orders & Payments
-
+### 📦 Orders & Cart
 * Place orders, manage cart & checkout
 * Order status updates & tracking
-* Payment gateway integration placeholders
+* Address management per user
 
 ### 🧾 Address Handling
-
 * Attach multiple addresses to user accounts
 * Link addresses to orders
 
 ### 🛠️ Admin Module
-
 * Full CRUD on users, products, orders
-* Basic analytics endpoints for sales & trends
+* Role assignment and management
+
+### 📊 Health Monitoring
+* /actuator/health — MySQL + Redis + System health
+* /actuator/info — App metadata
 
 ---
 
 ## 🔧 Tech Stack
-
-* **Java** 17+
-* **Spring Boot** (REST APIs)
-* **Spring Security** (JWT auth)
-* **Spring Data JPA** + **MySQL**
-* **Maven** (build tool)
-* **Postman** (API testing)
+* **Java 17+** + **Spring Boot 3.4**
+* **Spring Security** — JWT + RBAC
+* **Spring Data JPA** + **Hibernate** + **MySQL**
+* **Redis** — Caching layer
+* **Bucket4j** — Rate limiting
+* **Docker + Docker Compose** — Containerization
+* **Spring Boot Actuator** — Health monitoring
+* **Railway** — Cloud deployment
+* **Swagger** — API documentation
+* **Maven** — Build tool
+* **Postman** — API testing
 
 ---
 
 ## 📁 Directory Structure
-
 ```
 bazario/
-├── src/main/java/com/bazario/bazariobackend/
-│   ├── config/           # App config
-│   ├── controller/       # REST API controllers
-│   ├── exceptions/       # Custom exception handling
-│   ├── model/            # Entity classes
-│   ├── payload/          # DTOs and request/response models
-│   ├── repositories/     # JPA repositories
-│   ├── security/         # Security & JWT logic 
-│   ├── service/          # Business logic
-│   ├── util/             # Utility classes
-│   └── SbEcommerceApplication.java
-├── src/main/resources/
-│   └── application.properties
+├── src/
+│   ├── main/
+│   │   ├── java/com/bazario/bazariobackend/
+│   │   │   ├── config/           # Redis, Security, Rate Limiting
+│   │   │   ├── controller/       # REST API controllers
+│   │   │   ├── entity/           # Entity classes
+│   │   │   ├── exceptions/       # Custom exception handling
+│   │   │   ├── payload/          # DTOs and request/response models
+│   │   │   ├── repository/       # JPA repositories
+│   │   │   ├── security/         # Security & JWT logic
+│   │   │   ├── service/          # Business logic + Caching
+│   │   │   ├── util/             # Utility classes
+│   │   │   └── BazarioBackendApplication.java
+│   │   └── resources/
+│   │       └── application.properties
+│   └── test/
+│       └── BazarioBackendApplicationTests.java
 ├── postman/              # API collection
-│   └── ecom_api_collection.json
+├── Dockerfile            # Container config
+├── docker-compose.yml    # MySQL + Redis + App
+├── mvnw                  # Maven wrapper
 ├── pom.xml               # Maven config
 └── README.md
 ```
+
 
 ---
 
 ## ⚙️ Setup Instructions
 
-### Prerequisites
+### Option 1 — Docker (Recommended)
 
+Prerequisites:
+* Docker + Docker Compose
+
+```bash
+git clone https://github.com/NikhilSingh2310/bazario.git
+cd bazario
+./mvnw clean package -DskipTests
+docker compose up --build
+```
+
+App runs at http://localhost:8080
+MySQL at port 3306, Redis at port 6379
+
+---
+
+### Option 2 — Manual Setup
+
+Prerequisites:
 * Java 17+
 * MySQL 8+
 * Maven 3.8+
 
 ### 1. Clone and Navigate
-
 ```bash
 git clone https://github.com/NikhilSingh2310/bazario.git
 cd bazario
 ```
 
 ### 2. Create Database
-
 ```sql
 CREATE DATABASE bazario;
 ```
 
-### 3. Configure `application.properties`
-
+### 3. Configure application.properties
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/bazario
 spring.datasource.username=yourUsername
 spring.datasource.password=yourPassword
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+spring.data.redis.host=localhost
+spring.data.redis.port=6379
 ```
 
 ### 4. Build & Run
-
 ```bash
-mvn clean install
-mvn spring-boot:run
+./mvnw clean package -DskipTests
+./mvnw spring-boot:run
 ```
 
 ---
-
 ## 📬 API Testing
 
 * Import the Postman collection from `postman/BazarioBackend APIs.postman_collection.json`
